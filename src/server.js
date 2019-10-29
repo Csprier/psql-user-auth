@@ -57,4 +57,27 @@ app.use((err, req, res, next) => {
 });
 // ======================================================
 
+// ======================================================
+// POSTGRESQL DATABASE CONNECTION
+import pg from 'pg';
+const connectionString = process.env.PSQL_CONNECTION_URI || 'postgres://wizard:password@localhost:5432/psqlauthdb';
+const client = new pg.Client(connectionString);
+import db from './db/database';
+client.connect((err) => {
+  if (err) {
+    return console.error('could not connect to postgres', err);
+  }
+  console.log('-- Connecting to database from entry point --');
+  console.log('');
+  db.query('SELECT * FROM users', (err, result) => {
+    if (err) {
+      return console.error('error running query', err);
+    }
+    console.log('-- Connection test query results --');
+    console.log(result.rows);
+    // client.end();
+    console.log('-- End Test Query --');
+  });
+});
+
 export default app;
