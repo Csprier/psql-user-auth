@@ -57,11 +57,11 @@ router.post('/', (req, res, next) => {
     newUser,
     (err, res) => {
       if (err) {
-        console.error(err);
+        console.error(err.detail);
         return next(err);
       }
-      console.log(res.rows);
-      // res.status(201).json(res.rows);
+      console.log('res.rows: ', res.rows);
+      res.status(201).json({ message: 'User Created' });
     }
   );
 })
