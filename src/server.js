@@ -7,7 +7,9 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+// Routers
 import indexRouter from './routes/index';
+import userRouter from './routes/users.routes';
 
 // Instance
 const app = express();
@@ -38,6 +40,7 @@ app.get('/', (req, res) => {
 
 // Mount Routers
 app.use('/', indexRouter);
+app.use('/users', userRouter);
 
 // ======================================================
 // ERROR HANDLING

@@ -4,14 +4,14 @@ CREATE TABLE users(
   username VARCHAR (50) UNIQUE NOT NULL,
   password VARCHAR (50) NOT NULL,
   email VARCHAR (355) UNIQUE NOT NULL,
-  created_on TIMESTAMP NOT NULL,
+  created_on TIMESTAMP NOT NULL DEFAULT now(),
   last_login TIMESTAMP
 );
 */
 
 // =================================================================
 // Database
-import db from '../db/index';
+import db from '../db/database';
 // Express & Router
 const express = require('express');
 const router = express.Router();
@@ -46,6 +46,26 @@ router.get('/:id', (req, res, next) => {
 
 // =================================================================
 // POST
+router.post('/', (req, res, next) => {
+  let username = req.body.username,
+      email = req.body.email,
+      password = req.body.password,
+      newUser = [ username, password, email ];
+  const createNewUserQuery = 'INSERT INTO users(username, password, email) VALUES($1, $2, $3);'
+  db.query(
+    createNewUserQuery,
+    newUser,
+    (err, res) => {
+      if (err) {
+        console.error(err);
+        return next(err);
+      }
+      console.log(res.rows);
+      // res.status(201).json(res.rows);
+    }
+  );
+})
+
 
 // =================================================================
 // PUT
