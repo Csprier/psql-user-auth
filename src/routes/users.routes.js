@@ -50,7 +50,6 @@ router.post('/', (req, res, next) => {
     .then(result => console.log(result[0]))
     .catch(err => console.error(err));
   res.sendStatus(201);
-  res.send('Created New User');
 });
 
 
