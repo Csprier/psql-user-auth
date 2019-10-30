@@ -19,7 +19,7 @@ const router = express.Router();
 // =================================================================
 // GET
 router.get('/', (req, res, next) => {
-  const getAllUsersQuery = 'SELECT * FROM users';
+  const getAllUsersQuery = 'SELECT * FROM users;';
   db.query(getAllUsersQuery)
     .then(res => console.log(res))
     .catch(err => console.error(err));
@@ -28,7 +28,7 @@ router.get('/', (req, res, next) => {
 // =================================================================
 // GET/:id
 router.get('/:id', (req, res, next) => {
-  const getUserByIDQuery = 'SELECT * FROM users WHERE user_id = $1';
+  const getUserByIDQuery = 'SELECT * FROM users WHERE user_id = $1;';
   const id = parseInt(req.params.id);
   console.log('GET /:id', id);
   db.query(getUserByIDQuery, [id])
@@ -43,7 +43,7 @@ router.post('/', (req, res, next) => {
       email = req.body.email,
       password = req.body.password,
       newUser = [ username, password, email ];
-  const createNewUserQuery = `INSERT INTO users(username, password, email) VALUES($1, $2, $3) RETURNING user_id, username, email;`
+  const createNewUserQuery = 'INSERT INTO users(username, password, email) VALUES($1, $2, $3) RETURNING user_id, username, email;';
   db.query(createNewUserQuery, newUser)
     .then(res => console.log(res))
     .catch(err => console.error(err));
