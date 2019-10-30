@@ -20,13 +20,9 @@ const router = express.Router();
 // GET
 router.get('/', (req, res, next) => {
   const getAllUsersQuery = 'SELECT * FROM users';
-  db.query(getAllUsersQuery, (err, res) => {
-    if (err) {
-      return next(err);
-    }
-    console.log(res.rows);
-    // res.json(res.rows);
-  });
+  db.query(getAllUsersQuery)
+    .then(res => console.log(res))
+    .catch(err => console.error(err));
 });
 
 // =================================================================
@@ -35,13 +31,9 @@ router.get('/:id', (req, res, next) => {
   const getUserByIDQuery = 'SELECT * FROM users WHERE id = $1';
   const id = parseInt(req.params.id);
   console.log('GET /:id', id);
-  db.query(getUserByIDQuery, [id], (err, res) => {
-    if (err) {
-      return next(err);
-    }
-    console.log(res.rows[0]);
-    // res.status(200).json(result.rows);
-  });
+  db.query(getUserByIDQuery, [id])
+    .then(res => console.log(res))
+    .catch(err => console.error(err));
 });
 
 // =================================================================
@@ -52,7 +44,7 @@ router.post('/', (req, res, next) => {
       password = req.body.password,
       newUser = [ username, password, email ];
   const createNewUserQuery = `INSERT INTO users(username, password, email) VALUES($1, $2, $3) RETURNING user_id, username, email;`
-  return db.query(createNewUserQuery, newUser)
+  db.query(createNewUserQuery, newUser)
     .then(res => console.log(res))
     .catch(err => console.error(err));
 });
