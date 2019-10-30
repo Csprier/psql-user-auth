@@ -28,7 +28,7 @@ router.get('/', (req, res, next) => {
 // =================================================================
 // GET/:id
 router.get('/:id', (req, res, next) => {
-  const getUserByIDQuery = 'SELECT * FROM users WHERE id = $1';
+  const getUserByIDQuery = 'SELECT * FROM users WHERE user_id = $1';
   const id = parseInt(req.params.id);
   console.log('GET /:id', id);
   db.query(getUserByIDQuery, [id])
