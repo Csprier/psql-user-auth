@@ -42,7 +42,7 @@ router.get('/:id', (req, res, next) => {
     console.log(res.rows[0]);
     // res.status(200).json(result.rows);
   });
-})
+});
 
 // =================================================================
 // POST
@@ -51,7 +51,7 @@ router.post('/', (req, res, next) => {
       email = req.body.email,
       password = req.body.password,
       newUser = [ username, password, email ];
-  const createNewUserQuery = 'INSERT INTO users(username, password, email) VALUES($1, $2, $3);'
+  const createNewUserQuery = `INSERT INTO users(username, password, email) VALUES($1, $2, $3) RETURNING user_id, username, email;`
   db.query(
     createNewUserQuery,
     newUser,
@@ -60,11 +60,16 @@ router.post('/', (req, res, next) => {
         console.error(err.detail);
         return next(err);
       }
-      console.log('res.rows: ', res.rows);
-      res.status(201).json({ message: 'User Created' });
+      let newUserInfoObject = {
+        message: 'Created User',
+        user_id: res.rows[0].user_id, 
+        username: res.rows[0].username,
+        email: res.rows[0].email
+      };
+      console.log(newUserInfoObject);
     }
   );
-})
+});
 
 
 // =================================================================
