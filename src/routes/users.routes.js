@@ -52,23 +52,9 @@ router.post('/', (req, res, next) => {
       password = req.body.password,
       newUser = [ username, password, email ];
   const createNewUserQuery = `INSERT INTO users(username, password, email) VALUES($1, $2, $3) RETURNING user_id, username, email;`
-  db.query(
-    createNewUserQuery,
-    newUser,
-    (err, res) => {
-      if (err) {
-        console.error(err.detail);
-        return next(err);
-      }
-      let newUserInfoObject = {
-        message: 'Created User',
-        user_id: res.rows[0].user_id, 
-        username: res.rows[0].username,
-        email: res.rows[0].email
-      };
-      console.log(newUserInfoObject);
-    }
-  );
+  return db.query(createNewUserQuery, newUser)
+    .then(res => console.log(res))
+    .catch(err => console.error(err));
 });
 
 

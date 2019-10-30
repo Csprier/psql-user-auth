@@ -10,11 +10,14 @@ const pool = new Pool({
 });
 
 module.exports = {
-  query: (text, params, callback) => {
-    return pool.query(text, params, (err, res) => {
-      console.log('Executed query', { text, rows: res.rowCount });
-      callback(err, res);
-    });
+  query: (queryText, params) => {
+    console.log('Query Text:', queryText);
+    return new Promise((resolve, reject) => {
+      pool.query(queryText, params)
+        .then(res => resolve(res.rows))
+        .catch(e => reject(e.stack));
+      }
+    );
   },
   getClient: (callback) => {
     pool.connect((err, client, done) => {
