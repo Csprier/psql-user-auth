@@ -1,9 +1,9 @@
 import express from 'express';
 import passport from 'passport';
-import jwt from 'jwt';
+import jwt from 'jsonwebtoken';
 import db from '../db/database';
 
-const { JWT_SECRET, JWT_EXPIRY } = require('../../config');
+const { JWT_SECRET, JWT_EXPIRY } = require('../config');
 const router = express.Router();
 
 const localAuth = passport.authenticate('local', { 
