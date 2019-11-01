@@ -7,6 +7,11 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+// Passport & Strategies
+import passport from 'passport';
+import localStrategy from './auth/local';
+import jwtStrategy from './auth/jwt';
+
 // Routers
 import indexRouter from './routes/index';
 import userRouter from './routes/users.routes';
@@ -25,10 +30,18 @@ app.use((req, res, next) => {
 });
 app.options('*', cors());
 
+// ===============================================================================================
+// Utilize the given `strategies`
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+// Passport middleware functions
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Static
 app.use(express.static(path.join(__dirname, '../public')));
