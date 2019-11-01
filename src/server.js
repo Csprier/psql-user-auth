@@ -14,6 +14,7 @@ import jwtStrategy from './auth/jwt';
 
 // Routers
 import indexRouter from './routes/index';
+import authRouter from './routes/auth.routes';
 import userRouter from './routes/users.routes';
 
 // Instance
@@ -54,6 +55,7 @@ app.get('/', (req, res) => {
 // Mount Routers
 app.use('/', indexRouter);
 app.use('/users', userRouter);
+app.use('/auth', authRouter);
 
 // ======================================================
 // ERROR HANDLING
