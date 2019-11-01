@@ -61,12 +61,21 @@ router.put('/:id', (req, res, next) => {
   const updateUserQuery = 'UPDATE users SET username = $1, email = $2 WHERE user_id = $3;',
         params = [ username, email, user_id ];
   db.query(updateUserQuery, params)
-    .then(result => console.log(result))
+    .then(result => console.log(result[0]))
     .catch(err => console.error(err));
   res.sendStatus(200);
 });
 
 // =================================================================
 // DELETE
+router.delete('/:id', (req, res, next) => {
+  let user_id = req.body.user_id;
+  const deleteUserQuery = 'DELETE FROM users WHERE user_id = $1;',
+        params = [ user_id ];
+  db.query(deleteUserQuery, params)
+    .then(() => console.log('Deleted User!'))
+    .catch(err => console.error(err));
+  res.sendStatus(204);
+});
 
 module.exports = router;
