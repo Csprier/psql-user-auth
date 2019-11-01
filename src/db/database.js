@@ -11,7 +11,7 @@ const pool = new Pool({
 
 module.exports = {
   query: (queryText, params) => {
-    console.log('Query Text:', queryText);
+    console.log('Query Text:', queryText, ' with ', params);
     return new Promise((resolve, reject) => {
       pool.query(queryText, params)
         .then(res => resolve(res.rows))

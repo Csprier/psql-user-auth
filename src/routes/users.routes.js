@@ -55,6 +55,16 @@ router.post('/', (req, res, next) => {
 
 // =================================================================
 // PUT
+router.put('/:id', (req, res, next) => {
+  let user_id = req.body.user_id,
+      { username, email } = req.body;
+  const updateUserQuery = 'UPDATE users SET username = $1, email = $2 WHERE user_id = $3;',
+        params = [ username, email, user_id ];
+  db.query(updateUserQuery, params)
+    .then(result => console.log(result))
+    .catch(err => console.error(err));
+  res.sendStatus(200);
+});
 
 // =================================================================
 // DELETE
