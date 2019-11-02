@@ -13,6 +13,8 @@ CREATE TABLE users2(
 // =================================================================
 // Database
 import db from '../db/database';
+import passport from 'passport';
+import { hashPassword, validatePassword } from '../lib/password.utils';
 // Express & Router
 const express = require('express');
 const router = express.Router();
@@ -26,6 +28,10 @@ router.get('/', (req, res, next) => {
     .catch(err => console.error(err));
   res.sendStatus(200);
 });
+
+/* =================================================================================== */
+// PROTECTED
+router.use('/:id', passport.authenticate('jwt', { session: false, failWithError: true }));
 
 // =================================================================
 // GET/:id
@@ -45,7 +51,8 @@ router.post('/', (req, res, next) => {
   let username = req.body.username,
       email = req.body.email,
       password = req.body.password,
-      newUser = [ username, password, email ];
+      digest = hashPassword(password);
+      newUser = [ username, digest, email ]
   const createNewUserQuery = 'INSERT INTO users(username, password, email) VALUES($1, $2, $3) RETURNING user_id, username, email;';
   db.query(createNewUserQuery, newUser)
     .then(result => console.log(result[0]))

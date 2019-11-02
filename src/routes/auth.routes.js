@@ -13,7 +13,7 @@ const localAuth = passport.authenticate('local', {
 
 // Login endpoint for login
 router.post('/login', localAuth, (req, res) => {
-	const authToken = createAuthToken(req.user);
+	const authToken = createAuthToken(req.username);
 	return res.status(200).json({ authToken });
 });
 
@@ -30,6 +30,8 @@ router.post('/refresh', (req, res, next) => {
   db.query(findUserQuery, params)
     .then(user => {
       const authToken = createAuthToken(user[0]);
+      console.log('User', user);
+      console.log('authToken', authToken);
       res.json({ authToken });
     })
     .catch(err => {
