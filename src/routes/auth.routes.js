@@ -19,10 +19,9 @@ router.post('/login', localAuth, (req, res) => {
 
 // Refresh AuthToken
 router.use('/refresh', passport.authenticate('jwt', { 
-    session: false, 
-    failWithError: true 
-  }
-));
+  session: false, 
+  failWithError: true 
+}));
 
 router.post('/refresh', (req, res, next) => {
   let user_id = req.body.user_id;
