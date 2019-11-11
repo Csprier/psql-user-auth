@@ -1,10 +1,10 @@
 /*
-CREATE TABLE users2(
+CREATE TABLE users(
   user_id serial PRIMARY KEY,
   username VARCHAR (50) UNIQUE NOT NULL,
-  password VARCHAR (50) NOT NULL,
+  password VARCHAR (355) NOT NULL,
   email VARCHAR (355) UNIQUE NOT NULL,
-  authToken VARCHAR () NOT NULL, <-----------------------
+  authToken VARCHAR (500) NOT NULL,
   created_on TIMESTAMP NOT NULL DEFAULT now(),
   last_login TIMESTAMP
 );
@@ -15,6 +15,7 @@ CREATE TABLE users2(
 import db from '../db/database';
 import passport from 'passport';
 import { hashPassword, validatePassword } from '../lib/password.utils';
+import { createAuthToken } from '../lib/jwt.utils';
 // Express & Router
 const express = require('express');
 const router = express.Router();
@@ -48,16 +49,25 @@ router.get('/:id', (req, res, next) => {
 // =================================================================
 // POST
 router.post('/', (req, res, next) => {
-  let username = req.body.username,
-      email = req.body.email,
-      password = req.body.password,
-      digest = hashPassword(password);
-      newUser = [ username, digest, email ]
-  const createNewUserQuery = 'INSERT INTO users(username, password, email) VALUES($1, $2, $3) RETURNING user_id, username, email;';
-  db.query(createNewUserQuery, newUser)
-    .then(result => console.log(result[0]))
+  // let username = req.body.username,
+  //     email = req.body.email,
+  //     password = req.body.password,
+  //     authToken = createAuthToken(req.username);
+  const password = req.body.password;
+  return hashPassword(password)
+    .then(digest => {
+      let username = req.body.username,
+          email = req.body.email,
+          authToken = createAuthToken(req.body.username);
+      JSON.stringify(authToken);
+      const newUser = [ username, digest, email, authToken ];
+      const createNewUserQuery = 'INSERT INTO users(username, password, email, authToken) VALUES($1, $2, $3, $4) RETURNING user_id, username, email, authToken;';
+      db.query(createNewUserQuery, newUser)
+        .then(user => console.log(user[0]))
+        .catch(err => console.error(err));
+      res.sendStatus(201);
+    })
     .catch(err => console.error(err));
-  res.sendStatus(201);
 });
 
 
