@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken';
 const { JWT_SECRET, JWT_EXPIRY } = require('../config');
 
 /**
- * Export a createAuthToken function that signs the JWT for the user
+ * Export a createAuthToken function that signs the JWT 
+ * for the user when it's created or logs in
  */
 
 module.exports = {

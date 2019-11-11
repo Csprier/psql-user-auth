@@ -14,8 +14,7 @@ CREATE TABLE users(
 // Database
 import db from '../db/database';
 import passport from 'passport';
-import { hashPassword, validatePassword } from '../lib/password.utils';
-import { createAuthToken } from '../lib/jwt.utils';
+import { hashPassword } from '../lib/password.utils';
 // Express & Router
 const express = require('express');
 const router = express.Router();
@@ -49,19 +48,14 @@ router.get('/:id', (req, res, next) => {
 // =================================================================
 // POST
 router.post('/', (req, res, next) => {
-  // let username = req.body.username,
-  //     email = req.body.email,
-  //     password = req.body.password,
-  //     authToken = createAuthToken(req.username);
   const password = req.body.password;
   return hashPassword(password)
     .then(digest => {
       let username = req.body.username,
-          email = req.body.email,
-          authToken = createAuthToken(req.body.username);
+          email = req.body.email;
       JSON.stringify(authToken);
       const newUser = [ username, digest, email, authToken ];
-      const createNewUserQuery = 'INSERT INTO users(username, password, email, authToken) VALUES($1, $2, $3, $4) RETURNING user_id, username, email, authToken;';
+      const createNewUserQuery = 'INSERT INTO users(username, password, email) VALUES($1, $2, $3) RETURNING user_id, username, email;';
       db.query(createNewUserQuery, newUser)
         .then(user => console.log(user[0]))
         .catch(err => console.error(err));
