@@ -8,59 +8,60 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 // ========================================================================
-const localAuth = passport.authenticate('local', { 
-  session: false, 
-  failWithError: true 
-});
+// Define strategy authenticators
+const localAuth = passport.authenticate('local', { session: false, failWithError: true });
 
 // ========================================================================
 // Login endpoint for login
 router.post('/login', localAuth, (req, res) => {
-  console.log('req.user:', req.user);
-  const authToken = createAuthToken(req.user);
+  // console.log('req.user:', req.user);
+  const authToken = createAuthToken(req.user.username);
   const updateUserAuthTokenColumnQuery = 'UPDATE users SET authToken = $1 WHERE user_id = $2;',
-        params = [ authToken, user_id ];
+        params = [ authToken, req.user.user_id ];
   db.query(updateUserAuthTokenColumnQuery, params)
-    .then(result => console.log(result[0]))
+    .then(result => console.log(result))
     .catch(err => console.error(err));
-  
-  // Set the authToken in localStorage
-  localStorage.setItem('authToken', authToken);
+
 	return res.status(200).json({ authToken });
 });
 
+// const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
 // ========================================================================
 // Logout endpoint for logout
-router.post('/logout', localAuth, (req, res) => {
+const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
+router.use('/logout', jwtAuth);
+router.post('/logout', jwtAuth, (req, res) => {
+  console.log('req', req.body.user_id);
+  let user_id = req.body.user_id;
   const removeUserAuthTokenColumnDataQuery = `UPDATE users SET authToken = '' WHERE user_id = $1;`,
         params = [ user_id ];
   db.query(removeUserAuthTokenColumnDataQuery, params)
-    .then(result => console.log(result[0]))
+    .then(result => console.log(result))
     .catch(err => console.error(err));
 
-  // Destroy the authToken from localStorage
-  localStorage.removeItem('authToken');
-  return res.json(200);
+  return res.status(204).json({ message: 'Logout successful' });
 });
 
-const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
 // ========================================================================
 // Refresh AuthToken
-router.use('/refresh', passport.authenticate('jwt', { 
-  session: false, 
-  failWithError: true 
-}));
-
-// ========================================================================
+router.use('/refresh', jwtAuth);
 router.post('/refresh', jwtAuth, (req, res, next) => {
   let user_id = req.body.user_id;
   const findUserQuery = 'SELECT * FROM users WHERE user_id = $1;',
         params = [ user_id ];
   db.query(findUserQuery, params)
     .then(user => {
-      const authToken = createAuthToken(user[0]);
-      console.log('User', user[0]);
-      res.json({ authToken });
+      console.log('user', user[0].username);
+      const authToken = createAuthToken(user[0].username);
+      console.log('New AuthToken:', authToken);
+      db.query(
+        'UPDATE users SET authToken = $1 WHERE user_id = $2;',
+        [ authToken, user_id ]
+      )
+      .then(result => console.log(result))
+      .catch(err => console.error(err));
+      // Return the new authToken as json
+      return res.json({ authToken });
     })
     .catch(err => {
       console.error(err);

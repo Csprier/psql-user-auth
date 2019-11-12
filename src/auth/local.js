@@ -9,7 +9,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
   db.query(queryForUserExistence, params)
     .then(result => {
 			let user = result[0];
-			console.log(user);
+			// console.log(user);
       if (!user) {
 				return Promise.reject({
 					reason: 'LoginError',
@@ -17,21 +17,23 @@ const localStrategy = new LocalStrategy((username, password, done) => {
 					location: 'username'
         });
 			}
-			console.log('--- Inside localStrategy ---');
-			console.log('user.password:', user.password);
-			console.log('password:', password);
-			console.log('--- Validating ---');
-      return validatePassword(user.password, password);
+			let hashedPassword = user.password,
+					plaintTextPassword = password;
+			// console.log('HP', hashedPassword);
+			// console.log('PTP', plaintTextPassword);
+      return validatePassword(plaintTextPassword, hashedPassword, user);
     })
-    .then(isValid => {
-			if (!isValid) {
+    .then(validUser => {
+			console.log('isValid', validUser.isValid);
+			console.log('userData', validUser.userData);
+			if (!validUser.isValid) {
 				return Promise.reject({
 					reason: 'LoginError',
 					message: 'Incorrect password',
 					location: 'password'
 				});
 			}
-			return done(null, user);
+			return done(null, validUser.userData);
 		})
     .catch(err => {
       if (err.reason === 'LoginError') {
