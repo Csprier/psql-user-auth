@@ -1,10 +1,13 @@
 import bcrypt from 'bcryptjs';
 
 module.exports = {
-  validatePassword: (password) => {
-    return bcrypt.compare(password, this.password);
+  validatePassword: (hashedPassword, plainTextPassword) => {
+    console.log('--- Inside validatePassword ---')
+    console.log('hashedPassword:', hashedPassword);
+    console.log('plainTextPassword:', plainTextPassword);
+    return bcrypt.compare(hashedPassword, plainTextPassword);
   },
-  hashPassword: (password) => {
-    return bcrypt.hash(password, 10);
+  hashPassword: (plainTextPassword) => {
+    return bcrypt.hash(plainTextPassword, 10);
   }
 }
