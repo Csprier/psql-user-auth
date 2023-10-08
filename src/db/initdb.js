@@ -1,7 +1,12 @@
 const { Pool } = require('pg');
-const connectionString = process.env.PSQL_URI;
+// const connectionString = process.env.PSQL_URI;
 const pool = new Pool({
-  connectionString: connectionString
+//   connectionString: connectionString
+    user: process.env.POSTGRES_USER || 'postgres',
+    password: process.env.POSTGRES_PASSWORD || 'dev1337',
+    host: process.env.POSTGRES_HOST || 'localhost',
+    port: process.env.POSTGRES_PORT || 5432,
+    database: process.env.POSTGRES_DATABASE || 'psql_backend_boilerplate_db',
 });
 
 const db = pool;
@@ -19,7 +24,7 @@ async function createDatabase() {
 // ========================================================================
 async function createGreetingTable() {
     try {
-        await db.none(`
+        await db.query(`
         CREATE TABLE IF NOT EXISTS greeting (
             greeting_id serial PRIMARY KEY,
             greeting VARCHAR(255) NOT NULL
@@ -33,7 +38,7 @@ async function createGreetingTable() {
 async function seedGreeting() {
     try {
         // Insert initial data into the "users" table
-        await db.none(`
+        await db.query(`
         INSERT INTO greeting (greeting)
         VALUES
             ('Welcome to the database. Your GET request seems to be working as intended.'),
@@ -48,7 +53,7 @@ async function seedGreeting() {
 // ========================================================================
 async function createUsersTable() {
     try {
-        await db.none(`
+        await db.query(`
             CREATE TABLE users(
                 user_id serial PRIMARY KEY,
                 username VARCHAR (50) UNIQUE NOT NULL,
@@ -70,7 +75,7 @@ async function createUsersTable() {
 async function seedUsers() {
     try {
         // Insert initial data into the "users" table
-        await db.none(`
+        await db.query(`
         INSERT INTO users (username, email, password)
         VALUES
             ('user1', 'user1@example.com', 'password1'),
@@ -87,8 +92,8 @@ async function seedUsers() {
 module.exports = async function initdb() {
     db.connect()
         .then(() => createDatabase())
-        .then(() => db.none('DROP TABLE IF EXISTS greeting'))
-        .then(() => db.none('DROP TABLE IF EXISTS users;')) // This is to temporarily prevent duplications of the same 2 users that get seeded
+        .then(() => db.query('DROP TABLE IF EXISTS greeting'))
+        .then(() => db.query('DROP TABLE IF EXISTS users;')) // This is to temporarily prevent duplications of the same 2 users that get seeded
         .then(() => {
             console.log('Connected to the database. Creating tables.');
             createGreetingTable();
