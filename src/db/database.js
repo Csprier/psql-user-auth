@@ -23,6 +23,7 @@ module.exports = {
       }
     );
   },
+  // ==============================================================
   getClient: (callback) => {
     pool.connect((err, client, done) => {
       const query = client.query.bind(client);
