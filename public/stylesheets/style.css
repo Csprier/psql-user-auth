@@ -4,3 +4,25 @@
   padding: 0px;
 }
 
+label, input {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+form {
+  display: flex;
+  justify-content: space-evenly;
+  width: 250px;
+  height: 350px;
+  border: 1px solid black;
+}
+
+.up-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.in-form {
+  display: flex;
+  flex-direction: column;
+}

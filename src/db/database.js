@@ -4,7 +4,7 @@
  */
 
 const { Pool } = require('pg');
-const connectionString = 'postgres://wizard:password@localhost:5432/psqlauthdb';
+const connectionString = process.env.PSQL_URI;
 const pool = new Pool({
   connectionString: connectionString
 });
